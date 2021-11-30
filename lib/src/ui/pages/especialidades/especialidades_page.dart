@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/crear_especialidad_bloc.dart';
 import 'package:harry_williams_app/src/core/bloc/especialidades_bloc.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
+import 'package:harry_williams_app/src/ui/dialogs/dialogs_cargando.dart';
 
 class EspecialidadesPage extends StatelessWidget {
   EspecialidadesPage({ Key? key }) : super(key: key);
@@ -21,7 +22,13 @@ class EspecialidadesPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          _buscadorEspecialidades(),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8
+            ),
+            child: _buscadorEspecialidades(),
+          ),
           Expanded(
             child: StreamBuilder<List<Especialidad>>(
               stream: _especialidadesBloc.especialidadesStream,
@@ -36,7 +43,8 @@ class EspecialidadesPage extends StatelessWidget {
                     );
                   }
 
-                  return ListView.builder(
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(),
                     itemCount: especialidades.length,
                     itemBuilder: (context, index) {
                       final especialidad = especialidades[index];
@@ -61,6 +69,19 @@ class EspecialidadesPage extends StatelessWidget {
   void _mostrarDialogCrearEspecialidad(BuildContext context) {
     final _crearEspecialidadBloc = CrearEspecialidadBloc();
     
+    void _crearEspecialidad() async {
+      try {
+        await DialogsCargando.mostrarSalud(context);
+        await Future.delayed(Duration(seconds: 3));
+        _crearEspecialidadBloc.crear();
+        Navigator.pop(context);
+        Navigator.pop(context);
+      } catch (error) {
+        print(error);
+        Navigator.pop(context);
+      }
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -143,7 +164,7 @@ class EspecialidadesPage extends StatelessWidget {
                           )
                         ),
                         onPressed: botonActivo
-                          ? _crearEspecialidadBloc.crear
+                          ? _crearEspecialidad
                           : null
                       );
                     }
@@ -160,8 +181,9 @@ class EspecialidadesPage extends StatelessWidget {
   Widget _buscadorEspecialidades() {
     return TextField(
       decoration: InputDecoration(
-        suffixIcon: Icon(Icons.search)
-      )
+        suffixIcon: Icon(Icons.search),
+        hintText: 'Buscar especialidad'
+      ),
     );
   }
 }

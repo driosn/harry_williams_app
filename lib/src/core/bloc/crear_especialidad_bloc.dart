@@ -47,7 +47,7 @@ class CrearEspecialidadBloc {
 
   final _estadoPorDefectoVigente = false;
 
-  void crear() async {
+  Future<void> crear() async {
     final _nuevaEspecialidad = Especialidad(
       codigo: codigo,
       clasificacion: clasificacion,

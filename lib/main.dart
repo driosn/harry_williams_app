@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/ui/colores/colores.dart';
@@ -19,6 +18,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.light().copyWith(
           primary: colorPrimario
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 8
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8)
+          )
+        )
       ),
       home: PrincipalPage()
     );

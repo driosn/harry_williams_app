@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "493794803482",
+    "project_id": "harry-williams-app",
+    "storage_bucket": "harry-williams-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493794803482:android:fc690efacc9fccbc2b76a3",
+        "android_client_info": {
+          "package_name": "com.example.harry_williams_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493794803482-kgvplbrfu6uu7rr8eh110hf662aa9rdb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEVMxFLIKW-p4eRmbYEo6XIXawyp9WMPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493794803482-kgvplbrfu6uu7rr8eh110hf662aa9rdb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "493794803482-8pm2gqdgogbpjvtbfok4g0p56mv6uh1m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.harryWilliamsApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
