@@ -69,56 +69,58 @@ class MedicosPage extends StatelessWidget {
         return Dialog(
           child: Padding(
             padding: const EdgeInsets.all(18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Crear Especialidad',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Crear Medico',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18
+                    )
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Nombre'
+                    ),
+                    onChanged: (valor) => _crearMedicoBloc.nombre = valor
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Numero Matricula'
+                    ),
+                    onChanged: (valor) => _crearMedicoBloc.numeroMatricula = valor
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Titulo'
+                    ),
+                    onChanged: (valor) => _crearMedicoBloc.titulo = valor
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: StreamBuilder(
+                      stream: _crearMedicoBloc.formularioLlenadoCorrectamenteStream,
+                      builder: (context, snapshot) {
+                        final botonActivo = (snapshot.hasData && snapshot.data == true);
+                        return ElevatedButton(
+                          child: Text('Crear'),
+                          onPressed: botonActivo
+                            ? _crearMedicoBloc.crear
+                            : null
+                        );
+                      }
+                    ),
                   )
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Nombre'
-                  ),
-                  onChanged: (valor) => _crearMedicoBloc.nombre = valor
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Numero Matricula'
-                  ),
-                  onChanged: (valor) => _crearMedicoBloc.numeroMatricula = valor
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Titulo'
-                  ),
-                  onChanged: (valor) => _crearMedicoBloc.titulo = valor
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: StreamBuilder(
-                    stream: _crearMedicoBloc.formularioLlenadoCorrectamenteStream,
-                    builder: (context, snapshot) {
-                      final botonActivo = (snapshot.hasData && snapshot.data == true);
-                      return ElevatedButton(
-                        child: Text('Crear'),
-                        onPressed: botonActivo
-                          ? _crearMedicoBloc.crear
-                          : null
-                      );
-                    }
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
           )
         );

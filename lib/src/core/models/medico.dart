@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class Medico {
 
+  final String? id;
   final String nombre;
   final String numeroMatricula;
   final String titulo;
@@ -10,6 +11,7 @@ class Medico {
   DocumentReference? reference;
 
   Medico({
+    this.id,
     required this.nombre,
     required this.numeroMatricula,
     required this.titulo,
@@ -24,10 +26,27 @@ class Medico {
     'estadoVigente': estadoVigente,
   };
 
+  Map<String, dynamic> toMapConId() => {
+    'id': id,
+    'nombre': nombre,
+    'numeroMatricula': numeroMatricula,
+    'titulo': titulo,
+    'estadoVigente': estadoVigente
+  };
+
+  factory Medico.desdeMapInterno(Map<String, dynamic> data) => Medico(
+    id: data['id'],
+    nombre: data['nombre'],
+    numeroMatricula: data['numeroMatricula'],
+    titulo: data['titulo'],
+    estadoVigente: data['estadoVigente'],
+  );
+
   factory Medico.desdeDocumentSnapshot(DocumentSnapshot document) {
     final Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     
     return Medico(
+      id: document.reference.id,
       nombre: data['nombre'],
       numeroMatricula: data['numeroMatricula'],
       titulo: data['titulo'],

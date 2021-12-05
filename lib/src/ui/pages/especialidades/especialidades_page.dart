@@ -72,7 +72,7 @@ class EspecialidadesPage extends StatelessWidget {
     void _crearEspecialidad() async {
       try {
         await DialogsCargando.mostrarSalud(context);
-        await Future.delayed(Duration(seconds: 3));
+        // await Future.delayed(Duration(seconds: 3));
         _crearEspecialidadBloc.crear();
         Navigator.pop(context);
         Navigator.pop(context);
@@ -88,89 +88,91 @@ class EspecialidadesPage extends StatelessWidget {
         return Dialog(
           child: Padding(
             padding: const EdgeInsets.all(18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Crear Especialidad',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18
-                  )
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Codigo'
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Crear Especialidad',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18
+                    )
                   ),
-                  onChanged: (nuevoCodigo) => _crearEspecialidadBloc.codigo = nuevoCodigo
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Clasificacion'
-                  ),
-                  onChanged: (nuevaClasificacion) => _crearEspecialidadBloc.clasificacion = nuevaClasificacion
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        final _nuevaHoraInicio = await showTimePicker(
-                          context: context, 
-                          initialTime: TimeOfDay.now()
-                        );
-                        if (_nuevaHoraInicio != null) _crearEspecialidadBloc.horaInicio = _nuevaHoraInicio;
-                      },
-                      child: Text('Hora Inicio')
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Codigo'
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final _nuevaHoraFin = await showTimePicker(
-                          context: context, 
-                          initialTime: TimeOfDay.now()
-                        );
-                        if (_nuevaHoraFin != null) _crearEspecialidadBloc.horaFinal = _nuevaHoraFin;
-                      },
-                      child: Text('Hora Fin')
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Minutos Atencion'
+                    onChanged: (nuevoCodigo) => _crearEspecialidadBloc.codigo = nuevoCodigo
                   ),
-                  onChanged: (nuevosMinutos) {
-                    _crearEspecialidadBloc.minutosAtencion = int.tryParse(nuevosMinutos) ?? 0;
-                  }
-                ),
-                const SizedBox(height: 18),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: StreamBuilder(
-                    stream: _crearEspecialidadBloc.formularioLlenadoCorrectamenteStream,
-                    builder: (context, snapshot) {
-                      final botonActivo = (snapshot.hasData && snapshot.data == true);
-                      return ElevatedButton(
-                        child: Text('Crear'),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            botonActivo ? Colors.blue : Colors.grey
-                          )
-                        ),
-                        onPressed: botonActivo
-                          ? _crearEspecialidad
-                          : null
-                      );
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Clasificacion'
+                    ),
+                    onChanged: (nuevaClasificacion) => _crearEspecialidadBloc.clasificacion = nuevaClasificacion
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          final _nuevaHoraInicio = await showTimePicker(
+                            context: context, 
+                            initialTime: TimeOfDay.now()
+                          );
+                          if (_nuevaHoraInicio != null) _crearEspecialidadBloc.horaInicio = _nuevaHoraInicio;
+                        },
+                        child: Text('Hora Inicio')
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final _nuevaHoraFin = await showTimePicker(
+                            context: context, 
+                            initialTime: TimeOfDay.now()
+                          );
+                          if (_nuevaHoraFin != null) _crearEspecialidadBloc.horaFinal = _nuevaHoraFin;
+                        },
+                        child: Text('Hora Fin')
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Minutos Atencion'
+                    ),
+                    onChanged: (nuevosMinutos) {
+                      _crearEspecialidadBloc.minutosAtencion = int.tryParse(nuevosMinutos) ?? 0;
                     }
                   ),
-                )
-              ],
+                  const SizedBox(height: 18),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: StreamBuilder(
+                      stream: _crearEspecialidadBloc.formularioLlenadoCorrectamenteStream,
+                      builder: (context, snapshot) {
+                        final botonActivo = (snapshot.hasData && snapshot.data == true);
+                        return ElevatedButton(
+                          child: Text('Crear'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              botonActivo ? Colors.blue : Colors.grey
+                            )
+                          ),
+                          onPressed: botonActivo
+                            ? _crearEspecialidad
+                            : null
+                        );
+                      }
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         );

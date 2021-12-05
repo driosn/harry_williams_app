@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/ui/pages/especialidades/especialidades_page.dart';
 import 'package:harry_williams_app/src/ui/pages/medicos/medicos_page.dart';
+import 'package:harry_williams_app/src/ui/pages/programaciones/programaciones_page.dart';
 
 class PrincipalPage extends StatelessWidget {
   const PrincipalPage({ Key? key }) : super(key: key);
@@ -9,13 +10,25 @@ class PrincipalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Principal'),
+        title: Text('Admin'),
       ),
       body: ListView(
         children: [
-          _opcionItem(context, titulo: 'Especialidades', pageDestino: EspecialidadesPage()),
-          _opcionItem(context, titulo: 'Medicos', pageDestino: MedicosPage())
-
+          _opcionItem(
+            context, 
+            titulo: 'Especialidades', 
+            pageDestino: EspecialidadesPage()
+          ),
+          _opcionItem(
+            context, 
+            titulo: 'Medicos', 
+            pageDestino: MedicosPage()
+          ),
+          _opcionItem(
+            context, 
+            titulo: 'Programaciones',
+            pageDestino: ProgramacionesPage()
+          )
         ],
       ),
     );

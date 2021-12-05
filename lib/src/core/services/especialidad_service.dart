@@ -10,4 +10,11 @@ class EspecialidadService {
   Future<void> crear(Especialidad nuevaEspecialidad) async {
     await especialidades.add(nuevaEspecialidad.toMap());
   }
+
+  Future<List<Especialidad>> listar() async {
+    final querySnapshots = await especialidades.get();
+    final documents = querySnapshots.docs;
+    final especialidadesMapeadas = documents.map((item) => Especialidad.desdeDocumentSnapshot(item)).toList();
+    return especialidadesMapeadas;
+  }
 }

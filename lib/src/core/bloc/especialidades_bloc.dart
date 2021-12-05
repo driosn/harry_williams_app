@@ -13,6 +13,12 @@ class EspecialidadesBloc {
       }).toList();
   });
 
+  Stream<List<Especialidad>> get especialidadesVigentesStream => especialidades.where('estadoVigente', isEqualTo: true).snapshots().map<List<Especialidad>>((event) {
+    return event.docs.map((item) {
+      return Especialidad.desdeDocumentSnapshot(item);
+    }).toList();
+  });
+
   // Stream<List<Especialidad>> especialidadesStream() {
     // return especialidades.snapshots().map<List<Especialidad>>((event) {
       // return event.docs.map((item) {
