@@ -45,7 +45,7 @@ class CrearUsuarioBloc {
   final _rolPaciente = "PAC";
   final _estadoVigenteDefecto = true;
 
-  void crearPaciente() async {
+  Future<void> crearPaciente() async {
     final nombre = _nombreController.value;
     final apellido = _apellidoController.value;
     final nombreUsuario = _nombreUsuarioController.value;

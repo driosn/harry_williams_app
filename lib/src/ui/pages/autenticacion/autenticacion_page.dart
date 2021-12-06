@@ -7,6 +7,8 @@ import 'package:harry_williams_app/src/core/models/usuario.dart';
 import 'package:harry_williams_app/src/core/services/usuarios_service.dart';
 import 'package:harry_williams_app/src/ui/pages/principal/principal_page.dart';
 import 'package:harry_williams_app/src/ui/pages/principal_paciente/principal_paciente_page.dart';
+import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
+import 'package:harry_williams_app/src/utils/toast.dart';
 
 class AutenticacionPage extends StatefulWidget {
   AutenticacionPage({ Key? key }) : super(key: key);
@@ -26,34 +28,13 @@ class _AutenticacionPageState extends State<AutenticacionPage> {
     if (usu != null) {
       print('Existe usuario');
       print(usu.uid);
-    } else {
-
-
-      // await _usuariosService.registrarNuevo(Usuario(
-              // id: null, 
-              // nombre: 'nombre', 
-              // apellido: 'apellido', 
-              // nombreUsuario: 'nombreUsuario', 
-              // email: 'davidsamuelrios07@gmail.com', 
-              // contrasena: 'asdfasdf', 
-              // rol: 'PAC', 
-              // estadoVigente: true
-            // )
-          // );
-
-          // Usuario usuario = await _usuariosService.autenticar('davidsamuelrios07@gmail.com', 'asdfasdf');
-// 
-          // print(usuario.id);
-          // print(usuario.nombre);
-          // print(usuario.apellido);
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SeccionLogin()
+      body: SeccionLogin(),
     );
   }
 }
@@ -114,9 +95,10 @@ class _SeccionLoginState extends State<SeccionLogin> {
                       ? null
                       : () async {
                           try {
+                            DialogsCarga.mostrarCircular(context);
                             final usuario = await _usuarioBloc.autenticarCorreoYContrasena();
+                            Navigator.pop(context);
                             if (usuario.rol == "PAC") {
-                            // if (usuario.rol != "PAC") {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -132,6 +114,7 @@ class _SeccionLoginState extends State<SeccionLogin> {
                               );
                             }
                           } catch (e) {
+                            Navigator.pop(context);
                             showDialog(
                               context: context,
                               builder: (context) {
@@ -250,7 +233,7 @@ class _SeccionRegistroState extends State<SeccionRegistro> {
                   final botonActivo = snapshot.hasData && snapshot.data == true;
                   return ElevatedButton(
                     onPressed: botonActivo
-                      ? _crearUsuarioBloc.crearPaciente
+                      ? _crearCuenta
                       : null,
                     child: Text('Crear cuenta')
                   );
@@ -261,5 +244,18 @@ class _SeccionRegistroState extends State<SeccionRegistro> {
         ),
       )
     );
+  }
+
+  void _crearCuenta() async {
+    try {
+      DialogsCarga.mostrarCircular(context);
+      await _crearUsuarioBloc.crearPaciente();
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Toast.mostrarCorrecto(mensaje: 'Cuenta creada correctamnete');
+    } catch (e) {
+      Navigator.pop(context);
+      Toast.mostrarCorrecto(mensaje: 'No se pudo crear la cuenta');
+    }
   }
 }

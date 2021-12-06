@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/models/cita.dart';
-import 'package:harry_williams_app/src/core/models/dia.dart';
-import 'package:harry_williams_app/src/core/models/especialidad.dart';
-import 'package:harry_williams_app/src/core/models/medico.dart';
 import 'package:harry_williams_app/src/core/models/programacion.dart';
 import 'package:harry_williams_app/src/core/models/usuario.dart';
 import 'package:intl/intl.dart';

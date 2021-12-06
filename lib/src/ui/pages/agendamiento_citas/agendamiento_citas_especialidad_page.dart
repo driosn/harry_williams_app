@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:harry_williams_app/src/core/bloc/especialidades_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/especialidades_bloc.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
 import 'package:harry_williams_app/src/ui/pages/agendamiento_citas/agendamiento_citas_medicos_page.dart';
 

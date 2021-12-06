@@ -15,6 +15,10 @@ class AgendamientoCitasBloc {
     _programacionesController.sink.add(programacionesRespuesta);
   }
 
+  void verificarExistenDisponiblesEnFecha(DateTime fecha) {
+    
+  }
+
   void dispose() {
     _programacionesController.close();
   }

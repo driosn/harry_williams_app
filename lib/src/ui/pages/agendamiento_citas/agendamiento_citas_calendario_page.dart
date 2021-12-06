@@ -168,7 +168,7 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
                 top: 12
               ),
               child: ListView.separated(
-                separatorBuilder: (context, index) => Divider(
+                separatorBuilder: (context, index) => const Divider(
                   height: 4,
                   color: Colors.grey,
                   thickness: 1.5,

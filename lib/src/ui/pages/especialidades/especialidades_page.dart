@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:harry_williams_app/src/core/bloc/crear_especialidad_bloc.dart';
-import 'package:harry_williams_app/src/core/bloc/especialidades_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/crear_especialidad_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/editar_especialidad_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/especialidades_bloc.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
 import 'package:harry_williams_app/src/ui/dialogs/dialogs_cargando.dart';
+import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
+import 'package:harry_williams_app/src/utils/toast.dart';
 
 class EspecialidadesPage extends StatelessWidget {
   EspecialidadesPage({ Key? key }) : super(key: key);
@@ -49,7 +52,59 @@ class EspecialidadesPage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final especialidad = especialidades[index];
                       return ListTile(
-                        title: Text(especialidad.clasificacion),
+                        leading: GestureDetector(
+                          onTap: () {
+                            _especialidadesBloc.actualizarEstadoVigente(especialidad); 
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(
+                              milliseconds: 750
+                            ),
+                            width: 40,
+                            color: especialidad.estadoVigente
+                                    ? Colors.green
+                                    : Colors.red,
+                          ),
+                        ),
+                        title: Text(
+                          especialidad.clasificacion,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                        subtitle: Text(
+                          especialidad.codigo, 
+                        ),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return <PopupMenuEntry>[
+                              const PopupMenuItem(
+                                child: Text(
+                                  'Editar',
+                                ),
+                                value: 1,
+                              ),
+                              const PopupMenuItem(
+                                child: Text(
+                                  'Eliminar'
+                                ),
+                                value: 2,
+                              )
+                            ];
+                          },
+                          onSelected: (value) {
+                            switch (value) {
+                              case 1:
+                                _mostrarDialogEditarEspecialidad(context, especialidad);
+                                break;
+                              case 2:
+                                _eliminarEspecialidad(context, especialidad);
+                                break;
+                              default:
+                                break;
+                            }
+                          },
+                        ),
                       );
                     },
                   );
@@ -66,19 +121,33 @@ class EspecialidadesPage extends StatelessWidget {
     );
   }
 
+  void _eliminarEspecialidad(BuildContext context, Especialidad especialidad) async {
+    try {
+      DialogsCarga.mostrarCircular(context);
+      await _especialidadesBloc.eliminar(especialidad);
+      Navigator.pop(context);
+      Toast.mostrarCorrecto(mensaje: 'Especialidad eliminada correctamente');
+    } catch (e) {
+      print(e);
+      Navigator.pop(context);
+      Toast.mostrarIncorrecto(mensaje: 'La especialidad no se pudo eliminar');
+    }
+  }
+
   void _mostrarDialogCrearEspecialidad(BuildContext context) {
     final _crearEspecialidadBloc = CrearEspecialidadBloc();
     
     void _crearEspecialidad() async {
       try {
-        await DialogsCargando.mostrarSalud(context);
-        // await Future.delayed(Duration(seconds: 3));
+        DialogsCarga.mostrarCircular(context);
         _crearEspecialidadBloc.crear();
         Navigator.pop(context);
         Navigator.pop(context);
+        Toast.mostrarCorrecto(mensaje: 'Especialidad creada correctamente');
       } catch (error) {
         print(error);
         Navigator.pop(context);
+        Toast.mostrarIncorrecto(mensaje: 'La especialidad no se pudo crear');
       }
     }
 
@@ -103,52 +172,17 @@ class EspecialidadesPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Codigo'
                     ),
                     onChanged: (nuevoCodigo) => _crearEspecialidadBloc.codigo = nuevoCodigo
                   ),
                   const SizedBox(height: 12),
                   TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Clasificacion'
                     ),
                     onChanged: (nuevaClasificacion) => _crearEspecialidadBloc.clasificacion = nuevaClasificacion
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final _nuevaHoraInicio = await showTimePicker(
-                            context: context, 
-                            initialTime: TimeOfDay.now()
-                          );
-                          if (_nuevaHoraInicio != null) _crearEspecialidadBloc.horaInicio = _nuevaHoraInicio;
-                        },
-                        child: Text('Hora Inicio')
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final _nuevaHoraFin = await showTimePicker(
-                            context: context, 
-                            initialTime: TimeOfDay.now()
-                          );
-                          if (_nuevaHoraFin != null) _crearEspecialidadBloc.horaFinal = _nuevaHoraFin;
-                        },
-                        child: Text('Hora Fin')
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Minutos Atencion'
-                    ),
-                    onChanged: (nuevosMinutos) {
-                      _crearEspecialidadBloc.minutosAtencion = int.tryParse(nuevosMinutos) ?? 0;
-                    }
                   ),
                   const SizedBox(height: 18),
                   Align(
@@ -158,14 +192,88 @@ class EspecialidadesPage extends StatelessWidget {
                       builder: (context, snapshot) {
                         final botonActivo = (snapshot.hasData && snapshot.data == true);
                         return ElevatedButton(
-                          child: Text('Crear'),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              botonActivo ? Colors.blue : Colors.grey
-                            )
-                          ),
+                          child: const Text('Crear'),
                           onPressed: botonActivo
                             ? _crearEspecialidad
+                            : null
+                        );
+                      }
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+
+  void _mostrarDialogEditarEspecialidad(BuildContext context, Especialidad especialidad) {
+    final _editarEspecialidadBloc = EditarEspecialidadBloc(especialidad);
+    final _codigoController = TextEditingController()..text = especialidad.codigo;
+    final _clasificacionController = TextEditingController()..text = especialidad.clasificacion;
+
+    void _editarEspecialidad() async {
+      try {
+        DialogsCarga.mostrarCircular(context);
+        _editarEspecialidadBloc.editar();
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Toast.mostrarCorrecto(mensaje: 'Especialidad editada correctamente');
+      } catch (error) {
+        print(error);
+        Navigator.pop(context);
+        Toast.mostrarIncorrecto(mensaje: 'La especialidad no se pudo editar');
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Editar Especialidad',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18
+                    )
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _codigoController,
+                    decoration: const InputDecoration(
+                      hintText: 'Codigo'
+                    ),
+                    onChanged: (nuevoCodigo) => _editarEspecialidadBloc.codigo = nuevoCodigo
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _clasificacionController,
+                    decoration: const InputDecoration(
+                      hintText: 'Clasificacion'
+                    ),
+                    onChanged: (nuevaClasificacion) => _editarEspecialidadBloc.clasificacion = nuevaClasificacion
+                  ),
+                  const SizedBox(height: 18),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: StreamBuilder(
+                      stream: _editarEspecialidadBloc.formularioLlenadoCorrectamenteStream,
+                      builder: (context, snapshot) {
+                        final botonActivo = (snapshot.hasData && snapshot.data == true);
+                        return ElevatedButton(
+                          child: const Text('Crear'),
+                          onPressed: botonActivo
+                            ? _editarEspecialidad
                             : null
                         );
                       }

@@ -18,14 +18,14 @@ class MyApp extends StatelessWidget {
       title: 'Material App',
       theme: ThemeData(
         primaryColor: const Color(0xffDF001D),
-        colorScheme: ColorScheme.light().copyWith(
+        colorScheme: const ColorScheme.light().copyWith(
           primary: colorPrimario
         ),
         textTheme: GoogleFonts.latoTextTheme(
           Theme.of(context).textTheme
         ),
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 8
           ),
           border: OutlineInputBorder(

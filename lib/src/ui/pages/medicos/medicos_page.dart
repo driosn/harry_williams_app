@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:harry_williams_app/src/core/bloc/crear_especialidad_bloc.dart';
-import 'package:harry_williams_app/src/core/bloc/especialidades_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/crear_especialidad_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/especialidades/especialidades_bloc.dart';
 import 'package:harry_williams_app/src/core/bloc/medicos/crear_medico_bloc.dart';
 import 'package:harry_williams_app/src/core/bloc/medicos/medicos_bloc.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
