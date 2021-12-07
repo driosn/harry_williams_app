@@ -3,8 +3,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="harry_williams_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Harry Williams App"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

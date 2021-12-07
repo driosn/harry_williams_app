@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material App',
+      title: 'Hospital Harry Williams',
       theme: ThemeData(
         primaryColor: const Color(0xffDF001D),
         colorScheme: const ColorScheme.light().copyWith(
