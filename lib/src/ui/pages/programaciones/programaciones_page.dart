@@ -1,25 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/programaciones/crear_programacion_bloc.dart';
+import 'package:harry_williams_app/src/core/bloc/programaciones/programaciones_bloc.dart';
 import 'package:harry_williams_app/src/core/models/dia.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
+import 'package:harry_williams_app/src/core/models/programacion.dart';
+import 'package:harry_williams_app/src/helpers/time_helper.dart';
 import 'package:harry_williams_app/src/ui/pages/programaciones/crear_programacion_page.dart';
+import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
+import 'package:harry_williams_app/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 
-class ProgramacionesPage extends StatelessWidget {
+class ProgramacionesPage extends StatefulWidget {
   const ProgramacionesPage({ Key? key }) : super(key: key);
+
+  @override
+  State<ProgramacionesPage> createState() => _ProgramacionesPageState();
+}
+
+class _ProgramacionesPageState extends State<ProgramacionesPage> {
+
+  final _programacionesBloc = ProgramacionesBloc();
+
+  @override
+  void initState() {
+    super.initState();
+    _programacionesBloc.obtenerProgramaciones(); 
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Programaciones'),
+        title: const Text('Programaciones'),
       ),
       floatingActionButton: _crearProgramacionBoton(context),
-      body: Center(
-        child: Text(
-          'Programaciones'
+      body: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12
+        ),
+        child: StreamBuilder<List<Programacion>>(
+          stream: _programacionesBloc.programacionesStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final programaciones = snapshot.data!;
+              if (programaciones.isNotEmpty) {
+                return ListView.builder(
+                  itemCount: programaciones.length,
+                  itemBuilder: (context, index) {
+                    final programacion = programaciones[index];
+                    final nombreMedico = programacion.medico.nombre.toUpperCase();
+                    final horaInicio = TimeHelper.aString(programacion.horaInicio);
+                    final horaFin = TimeHelper.aString(programacion.horaFin);
+                    final String diasDeAtencion = programacion.dias.map((dia) => dia.nombre).join('-').toUpperCase();
+                    return ListTile(
+                      isThreeLine: true,
+                      title: Text(
+                        'Medico: $nombreMedico',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Horario: $horaInicio - $horaFin\nDias de atención: $diasDeAtencion'
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red.shade800,
+                        ),
+                        onPressed: () => _mostrarBorrarProgramacionDialog(context, programacion),
+                      ),
+                    );
+                  },
+                );
+              }
+              return const Center(
+                child: Text('No existen medicos para esta especialidad en este momento'),
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         ),
       ),
+    );
+  }
+
+  void _mostrarBorrarProgramacionDialog(BuildContext context, Programacion programacion) {
+    void _eliminarProgramacion() async {
+      try {
+        DialogsCarga.mostrarCircular(context);
+        await _programacionesBloc.eliminarProgramacion(programacion);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Toast.mostrarCorrecto(mensaje: 'Programación eliminada correctamente');
+      } catch (e) {
+        Navigator.pop(context);
+        Toast.mostrarIncorrecto(mensaje: 'No se pudo eliminar la programación');
+      }
+    }
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: const Text(
+            '¿Está seguro de elimnar la programación?'
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: _eliminarProgramacion
+            )
+          ]
+        );
+      }
     );
   }
 

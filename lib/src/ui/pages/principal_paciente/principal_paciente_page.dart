@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/usuarios/usuario_bloc.dart';
 import 'package:harry_williams_app/src/ui/pages/agendamiento_citas/agendamiento_citas_especialidad_page.dart';
+import 'package:harry_williams_app/src/ui/pages/citas_solicitadas/citas_solicitadas_page.dart';
 
 class PrincipalPacientePage extends StatelessWidget {
   PrincipalPacientePage({ Key? key }) : super(key: key);
@@ -20,6 +21,11 @@ class PrincipalPacientePage extends StatelessWidget {
             context, 
             titulo: 'Solicitar Cita Medica', 
             pageDestino: AgendamientoCitasEspecialidadPage()
+          ),
+          _opcionItem(
+            context, 
+            titulo: 'Ver citas solicitadas', 
+            pageDestino: CitasSolicitadasPage()
           ),
         ],
       ),

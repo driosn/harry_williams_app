@@ -1,32 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
 import 'package:harry_williams_app/src/core/models/medico.dart';
+import 'package:harry_williams_app/src/core/models/programacion.dart';
 import 'package:harry_williams_app/src/core/services/especialidad_service.dart';
 import 'package:harry_williams_app/src/core/services/medico_service.dart';
+import 'package:harry_williams_app/src/core/services/programaciones_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ProgramacionesBloc {
 
-  final _especialidadesService = EspecialidadService();
-  final _medicosService = MedicosService();
+  final _programacionesService = ProgramacionesService();  
 
-  final _especialidadesController = BehaviorSubject<List<Especialidad>>();
-  final _medicosController = BehaviorSubject<List<Medico>>();
+  final _programacionesController = BehaviorSubject<List<Programacion>>();
 
-  Stream<List<Especialidad>> get especialidadesStream => _especialidadesController.stream;
-  Stream<List<Medico>> get medicosStream => _medicosController.stream;
+  static final CollectionReference programaciones = FirebaseFirestore.instance.collection('programaciones');
+  Stream<List<Programacion>> get programacionesStream => programaciones.snapshots().map<List<Programacion>>((event) {
+      return event.docs.map((item) {
+        return Programacion.desdeDocumentSnapshot(item);
+      }).toList();
+  });
 
-  void obtenerEspecialidades() async {
-    final especialidadesRespuesta = await _especialidadesService.listar();
-    _especialidadesController.sink.add(especialidadesRespuesta);
+  void obtenerProgramaciones() async {
+    final programacionesRespuesta = await _programacionesService.listar();
+    _programacionesController.sink.add(programacionesRespuesta);
   }
 
-  void obtenerMedicos() async {
-    final medicosRespuesta = await _medicosService.listar();
-    _medicosController.sink.add(medicosRespuesta);
+  Future<void> eliminarProgramacion(Programacion programacion) async {
+    await _programacionesService.eliminar(programacion);
+    obtenerProgramaciones();
   }
 
   void dispose() {
-    _especialidadesController.close();
-    _medicosController.close();
+    _programacionesController.close();
   }
 }

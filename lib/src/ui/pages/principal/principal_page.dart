@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:harry_williams_app/src/ui/pages/citas_solicitadas_admin/citas_solicitadas_admin_page.dart';
 import 'package:harry_williams_app/src/ui/pages/especialidades/especialidades_page.dart';
 import 'package:harry_williams_app/src/ui/pages/medicos/medicos_page.dart';
 import 'package:harry_williams_app/src/ui/pages/programaciones/programaciones_page.dart';
@@ -28,6 +29,11 @@ class PrincipalPage extends StatelessWidget {
             context, 
             titulo: 'Programaciones',
             pageDestino: ProgramacionesPage()
+          ),
+          _opcionItem(
+            context, 
+            titulo: 'Citas solicitadas',
+            pageDestino: CitasSolicitadasAdminPage()
           )
         ],
       ),

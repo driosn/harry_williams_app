@@ -11,10 +11,21 @@ class ProgramacionesService {
     await programaciones.add(nuevaProgramacion.toMap());
   }
 
+  Future<List<Programacion>> listar() async {
+    final querySnapshots = await programaciones.get();
+    final documents = querySnapshots.docs;
+    final programacionesMapeadas = documents.map((item) => Programacion.desdeDocumentSnapshot(item)).toList();
+    return programacionesMapeadas;
+  }
+
   Future<List<Programacion>> listarPorEspecialidadId(String especialidadId) async {
     final querySnapshots = await programaciones.where('especialidad.id', isEqualTo: especialidadId).get();
     final documents = querySnapshots.docs;
     final programacionesMapeadas = documents.map((item) => Programacion.desdeDocumentSnapshot(item)).toList();
     return programacionesMapeadas;
+  }
+
+  Future<void> eliminar(Programacion programacion) async {
+    await programacion.reference!.delete();
   }
 }

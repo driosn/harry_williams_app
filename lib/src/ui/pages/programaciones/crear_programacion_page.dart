@@ -3,6 +3,8 @@ import 'package:harry_williams_app/src/core/bloc/programaciones/crear_programaci
 import 'package:harry_williams_app/src/core/models/dia.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
 import 'package:harry_williams_app/src/core/models/medico.dart';
+import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
+import 'package:harry_williams_app/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -298,7 +300,7 @@ class _CrearProgramacionPageState extends State<CrearProgramacionPage> {
                         final botonActivo = snapshot.hasData && snapshot.data == true;
                         return ElevatedButton(
                           onPressed: botonActivo 
-                            ? _crearProgramacionBloc.crear
+                            ? _crearProgramacion
                             : null,
                           child: const Text(
                             'Crear Programación'
@@ -313,6 +315,20 @@ class _CrearProgramacionPageState extends State<CrearProgramacionPage> {
           ),
     );
   }
+
+  void _crearProgramacion() async {
+    try {
+      DialogsCarga.mostrarCircular(context);
+      await _crearProgramacionBloc.crear();
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Toast.mostrarCorrecto(mensaje: 'Programación creada correctamente');
+    } catch (e) {
+      Navigator.pop(context);
+      print(e);
+      Toast.mostrarIncorrecto(mensaje: 'No se pudo crear la programación');
+    }
+  }    
 
   void _mostrarSeleccionarMedicos() {
     showDialog(

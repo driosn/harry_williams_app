@@ -144,10 +144,9 @@ class CrearProgramacionBloc {
     _medicosSeleccionadosController.sink.add(medicosYaSeleccionados);
   }
 
-  void crear() async {
+  Future<void> crear() async {
     List<Programacion> programacionesCreadasCorrectamente = [];
     try {
-
       List<Medico> medicosSeleccionados = _medicosSeleccionadosController.value;
       Especialidad especialidad = _especialidadController.value;
       DateTime fechaInicio = _fechaInicioController.value;

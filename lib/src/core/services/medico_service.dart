@@ -15,4 +15,16 @@ class MedicosService {
     final medicosMapeados = documents.map((item) => Medico.desdeDocumentSnapshot(item)).toList();
     return medicosMapeados;
   }
+
+  Future<void> actualizarEstadoVigente(Medico medico) async {
+    await medico.reference!.update({'estadoVigente': !medico.estadoVigente});
+  }
+
+  Future<void> editar(Medico medico) async {
+    await medico.reference!.set(medico.toMap());
+  }
+
+  Future<void> eliminar(Medico medico) async {
+    await medico.reference!.delete();
+  }
 }

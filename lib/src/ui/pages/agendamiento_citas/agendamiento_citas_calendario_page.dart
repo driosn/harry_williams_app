@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/usuarios/usuario_bloc.dart';
 import 'package:harry_williams_app/src/core/models/cita.dart';
+import 'package:harry_williams_app/src/core/models/cita_solicitada.dart';
 import 'package:harry_williams_app/src/core/models/programacion.dart';
 import 'package:harry_williams_app/src/core/services/citas_service.dart';
+import 'package:harry_williams_app/src/core/services/citas_solicitadas_service.dart';
 import 'package:harry_williams_app/src/helpers/time_helper.dart';
 import 'package:harry_williams_app/src/ui/colores/colores.dart';
+import 'package:harry_williams_app/src/ui/pages/principal_paciente/principal_paciente_page.dart';
+import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
+import 'package:harry_williams_app/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -189,16 +194,30 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
                             ),
                             actions: [
                               TextButton(
-                                child: Text('Cancelar'),
+                                child: const Text('Cancelar'),
                                 onPressed: () => Navigator.pop(context)
                               ),
                               TextButton(
-                                child: Text('Aceptar'),
-                                onPressed: () {
+                                child: const Text('Aceptar'),
+                                onPressed: () async {
                                   try {
+                                    DialogsCarga.mostrarCircular(context);
                                     final _citasService = CitasService();
-                                    _citasService.agendarCitaAPaciente(cita, usuarioBloc.usuario);
+                                    final _citasSolicitadasService = CitasSolicitadasService();
+                                    await _citasService.agendarCitaAPaciente(cita, usuarioBloc.usuario);
+                                    cita.paciente = usuarioBloc.usuario;
+                                    
+                                    final _nuevaCitaSolicitada = CitaSolicitada(
+                                      cita: cita,
+                                      estadoCita: 'agendado',
+                                      fecha: DateTime.now()
+                                    );
+
+                                    await _citasSolicitadasService.crear(_nuevaCitaSolicitada);
+
                                     Navigator.pop(context);
+                                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => PrincipalPacientePage()), (route) => false);
+                                    Toast.mostrarCorrecto(mensaje: 'Cita solicitada correctamente');
                                     print('Cita Agendada correctamente');
                                   } catch (e) {
                                     print('Error: $e');

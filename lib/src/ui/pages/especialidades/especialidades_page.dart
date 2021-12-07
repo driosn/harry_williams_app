@@ -98,7 +98,7 @@ class EspecialidadesPage extends StatelessWidget {
                                 _mostrarDialogEditarEspecialidad(context, especialidad);
                                 break;
                               case 2:
-                                _eliminarEspecialidad(context, especialidad);
+                                _mostrarDialogEliminarEspecialidad(context, especialidad);
                                 break;
                               default:
                                 break;
@@ -132,6 +132,45 @@ class EspecialidadesPage extends StatelessWidget {
       Navigator.pop(context);
       Toast.mostrarIncorrecto(mensaje: 'La especialidad no se pudo eliminar');
     }
+  }
+
+  void _mostrarDialogEliminarEspecialidad(BuildContext context, Especialidad especialidad) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: const Text(
+            '¿Estás seguro de eliminar la especialidad?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancelar')
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  DialogsCarga.mostrarCircular(context);
+                  await _especialidadesBloc.eliminar(especialidad);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Toast.mostrarCorrecto(
+                    mensaje: 'Se elimino la especialidad correctamente'
+                  );
+                } catch (e) {
+                  Navigator.pop(context);
+                  print(e);
+                  Toast.mostrarIncorrecto(
+                    mensaje: 'La especialidad no se pudo eliminar'
+                  );
+                }
+              },
+              child: Text('Aceptar')
+            )
+          ],
+        );
+      }
+    );
   }
 
   void _mostrarDialogCrearEspecialidad(BuildContext context) {

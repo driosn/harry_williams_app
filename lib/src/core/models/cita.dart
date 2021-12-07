@@ -14,7 +14,7 @@ class Cita {
   final TimeOfDay horaFin;
   final Medico medico;
   final Especialidad especialidad;
-  final Usuario paciente;
+  Usuario paciente;
   final DocumentReference? reference;
 
   Cita({
@@ -36,6 +36,19 @@ class Cita {
     'paciente': paciente.toMap(),
     'especialidad': especialidad.toMapConId()
   };
+
+  factory Cita.desdeMapa(Map<String, dynamic> data) {
+    Timestamp fecha = data['fecha'];
+    
+    return Cita(
+      fecha: fecha.toDate(),
+      horaInicio: TimeHelper.desdeString(data['horaInicio']),
+      horaFin: TimeHelper.desdeString(data['horaFin']),
+      medico: Medico.desdeMapInterno(data['medico']),
+      paciente: Usuario.desdeMapa(data['paciente']),
+      especialidad: Especialidad.desdeMapa(data['especialidad']),
+    );
+  } 
 
   factory Cita.desdeDocumentSnapshot(DocumentSnapshot document) {
     final data = document.data() as Map<String, dynamic>;
