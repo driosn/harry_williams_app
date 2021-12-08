@@ -34,12 +34,14 @@ class CitasSolicitadasAdminPage extends StatelessWidget {
                   final fechaFormateada = DateFormat('dd/MM/yyyy').format(cita.cita.fecha);
                   final horaInicio = TimeHelper.aString(cita.cita.horaInicio);
                   final horaFin = TimeHelper.aString(cita.cita.horaFin);
+                  final nombrePaciente = cita.cita.paciente.nombre;
+                  final correoPaciente = cita.cita.paciente.email;
                   return ListTile(
                     title: Text(
                       'Especialidad: $nombreEspecialidad'
                     ),
                     subtitle: Text(
-                      'Médico: $nombreMedico\nHorario: $fechaFormateada, $horaInicio - $horaFin'
+                      'Médico: $nombreMedico\nHorario: $fechaFormateada, $horaInicio - $horaFin\nPaciente: $nombrePaciente\nCorreo: $correoPaciente'
                     ),
                     isThreeLine: true,
                     leading: AnimatedContainer(

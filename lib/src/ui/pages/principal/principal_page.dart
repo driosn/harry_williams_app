@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:harry_williams_app/src/ui/pages/autenticacion/autenticacion_page.dart';
 import 'package:harry_williams_app/src/ui/pages/citas_solicitadas_admin/citas_solicitadas_admin_page.dart';
 import 'package:harry_williams_app/src/ui/pages/dias_festivos/dias_festivos_page.dart';
 import 'package:harry_williams_app/src/ui/pages/especialidades/especialidades_page.dart';
@@ -15,6 +16,14 @@ class PrincipalPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => AutenticacionPage()), (route) => false);
+            },
+          )
+        ],
       ),
       body: ListView(
         children: [

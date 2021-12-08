@@ -99,14 +99,14 @@ class _SeccionLoginState extends State<SeccionLogin> {
                             final usuario = await _usuarioBloc.autenticarCorreoYContrasena();
                             Navigator.pop(context);
                             if (usuario.rol == "PAC") {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => PrincipalPacientePage()
                                 )
                               );
                             } else {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => PrincipalPage() 

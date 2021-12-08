@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/usuarios/usuario_bloc.dart';
 import 'package:harry_williams_app/src/ui/pages/agendamiento_citas/agendamiento_citas_especialidad_page.dart';
+import 'package:harry_williams_app/src/ui/pages/autenticacion/autenticacion_page.dart';
 import 'package:harry_williams_app/src/ui/pages/citas_solicitadas/citas_solicitadas_page.dart';
 
 class PrincipalPacientePage extends StatelessWidget {
@@ -14,6 +15,14 @@ class PrincipalPacientePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bienvenido: ${usuario.nombre}'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => AutenticacionPage()), (route) => false);
+            },
+          )
+        ],
       ),
       body: ListView(
         children: [
