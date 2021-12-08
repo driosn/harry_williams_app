@@ -10,10 +10,17 @@ import 'package:harry_williams_app/src/ui/dialogs/dialogs_cargando.dart';
 import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
 import 'package:harry_williams_app/src/utils/toast.dart';
 
-class MedicosPage extends StatelessWidget {
+class MedicosPage extends StatefulWidget {
   MedicosPage({ Key? key }) : super(key: key);
 
+  @override
+  State<MedicosPage> createState() => _MedicosPageState();
+}
+
+class _MedicosPageState extends State<MedicosPage> {
   final _medicosBloc = MedicosBloc();
+
+  String busqueda = "";
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +59,9 @@ class MedicosPage extends StatelessWidget {
                     itemCount: medicos.length,
                     itemBuilder: (context, index) {
                       final medico = medicos[index];
+                      if (!medico.nombre.toLowerCase().contains(busqueda)) {
+                        return Container();
+                      }
                       return ListTile(
                         leading: GestureDetector(
                           onTap: () {
@@ -326,6 +336,11 @@ class MedicosPage extends StatelessWidget {
         suffixIcon: Icon(Icons.search),
         hintText: 'Buscar médico'
       ),
+      onChanged: (valor) {
+        setState(() {
+          busqueda = valor;
+        });
+      },
     );
   }
 }

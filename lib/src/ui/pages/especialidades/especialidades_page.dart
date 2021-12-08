@@ -6,10 +6,17 @@ import 'package:harry_williams_app/src/core/models/especialidad.dart';
 import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
 import 'package:harry_williams_app/src/utils/toast.dart';
 
-class EspecialidadesPage extends StatelessWidget {
+class EspecialidadesPage extends StatefulWidget {
   EspecialidadesPage({ Key? key }) : super(key: key);
 
+  @override
+  State<EspecialidadesPage> createState() => _EspecialidadesPageState();
+}
+
+class _EspecialidadesPageState extends State<EspecialidadesPage> {
   final _especialidadesBloc = EspecialidadesBloc();
+
+  String busqueda = "";
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +56,10 @@ class EspecialidadesPage extends StatelessWidget {
                     itemCount: especialidades.length,
                     itemBuilder: (context, index) {
                       final especialidad = especialidades[index];
+                      if (!especialidad.clasificacion.toLowerCase().contains(busqueda.toLowerCase())) {
+                        return Container();
+                      }
+
                       return ListTile(
                         leading: GestureDetector(
                           onTap: () {
@@ -329,8 +340,13 @@ class EspecialidadesPage extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         suffixIcon: Icon(Icons.search),
-        hintText: 'Buscar especialidad'
+        hintText: 'Buscar especialidad',
       ),
+      onChanged: (valor) {
+        setState(() {
+          busqueda = valor;
+        });
+      },
     );
   }
 }
