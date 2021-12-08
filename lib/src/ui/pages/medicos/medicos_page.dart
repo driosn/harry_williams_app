@@ -242,6 +242,19 @@ class MedicosPage extends StatelessWidget {
   void _mostrarDialogCrearMedico(BuildContext context) {
     final _crearMedicoBloc = CrearMedicoBloc();
     
+    void _crearMedico() async {
+      try {
+        DialogsCarga.mostrarCircular(context);
+        await _crearMedicoBloc.crear();
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Toast.mostrarCorrecto(mensaje: 'Médico creado correctamente');
+      } catch (e) {
+        Navigator.pop(context);
+        print(e.toString());
+      }
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -292,7 +305,7 @@ class MedicosPage extends StatelessWidget {
                         return ElevatedButton(
                           child: Text('Crear'),
                           onPressed: botonActivo
-                            ? _crearMedicoBloc.crear
+                            ? _crearMedico
                             : null
                         );
                       }

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/especialidades/crear_especialidad_bloc.dart';
 import 'package:harry_williams_app/src/core/bloc/especialidades/editar_especialidad_bloc.dart';
 import 'package:harry_williams_app/src/core/bloc/especialidades/especialidades_bloc.dart';
 import 'package:harry_williams_app/src/core/models/especialidad.dart';
-import 'package:harry_williams_app/src/ui/dialogs/dialogs_cargando.dart';
 import 'package:harry_williams_app/src/utils/dialogs_carga.dart';
 import 'package:harry_williams_app/src/utils/toast.dart';
 

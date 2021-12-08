@@ -1,10 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:harry_williams_app/src/core/bloc/usuarios/usuario_bloc.dart';
 import 'package:harry_williams_app/src/core/models/cita.dart';
 import 'package:harry_williams_app/src/core/models/cita_solicitada.dart';
+import 'package:harry_williams_app/src/core/models/dia_festivo.dart';
 import 'package:harry_williams_app/src/core/models/programacion.dart';
 import 'package:harry_williams_app/src/core/services/citas_service.dart';
 import 'package:harry_williams_app/src/core/services/citas_solicitadas_service.dart';
+import 'package:harry_williams_app/src/core/services/dias_festivos_service.dart';
+import 'package:harry_williams_app/src/core/services/vacaciones_service.dart';
 import 'package:harry_williams_app/src/helpers/time_helper.dart';
 import 'package:harry_williams_app/src/ui/colores/colores.dart';
 import 'package:harry_williams_app/src/ui/pages/principal_paciente/principal_paciente_page.dart';
@@ -31,6 +36,10 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
   late DateTime fechaFinal;
   late List<DateTime> diasDeAtencion;
 
+  List<DiaFestivo> diasFestivos = [];
+  List<DateTime> diasDeVacaciones = [];
+
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +56,28 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
       }
       fechaIterador = fechaIterador.add(const Duration(days: 1));
     }
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      final _vacacionesService = VacacionesService();
+      final vacaciones = await _vacacionesService.listarPorMedicoId(widget.mProgramacion.medico.id!);
+      if (vacaciones.isNotEmpty) {
+        final vacacionActiva = vacaciones.first;
+        final fechaInicialVacaciones = vacacionActiva.fechaInicio;
+        final fechaFinalVacaciones = vacacionActiva.fechaFin;
+      
+        DateTime fechaIterador = fechaInicialVacaciones;
+        while(fechaIterador.isBefore(fechaFinalVacaciones) || fechaIterador.isAtSameMomentAs(fechaFinalVacaciones)) {
+          diasDeVacaciones.add(fechaIterador);
+          fechaIterador = fechaIterador.add(const Duration(days: 1));
+        }
+      }
+      
+
+      final _diasFestivosService = DiasFestivosService();
+      diasFestivos = await _diasFestivosService.listar();
+
+      setState(() { });
+    });
   }
 
   @override
@@ -62,6 +93,57 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
           cellBuilder: (BuildContext context, DateRangePickerCellDetails details) {
             final fechaASerRenderizada = details.date;
             final esDiaDeAtencion = diasDeAtencion.contains(fechaASerRenderizada);
+
+            // Se renderiza container naranja si es fecha festiva
+            if (diasFestivos.where((dia) => dia.fecha.isAtSameMomentAs(fechaASerRenderizada)).isNotEmpty) {
+              DiaFestivo diaFestivo = diasFestivos.where((dia) => dia.fecha.isAtSameMomentAs(fechaASerRenderizada)).first;
+              return Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                ),
+                child: Center(
+                  child: Transform.rotate(
+                    angle: -pi * 0.3,
+                    child: Text(
+                      diaFestivo.nombre,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
+                    ),
+                  )
+                )
+              );
+            }
+
+            // Se renderiza container plomo si el médico tiene vacaciones
+            if (diasDeVacaciones.contains(fechaASerRenderizada)) {
+              return Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                ),
+                child: Center(
+                  child: Transform.rotate(
+                    angle: -pi * 0.3,
+                    child: Text(
+                      'Vacación',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
+                    ),
+                  )
+                )
+              );
+            }
+
+            // Retorna elemento de atención normal;
             return Container(
                 margin: const EdgeInsets.all(2),
                 padding: const EdgeInsets.only(top: 10),
@@ -107,11 +189,49 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
     );
   }
 
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
+  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {   
     final _citasService = CitasService();
     final especialidadId = widget.mProgramacion.especialidad.id!;
     final medicoId = widget.mProgramacion.medico.id!;
     final dia = args.value as DateTime;
+
+    if (diasFestivos.where((dFestivo) => dFestivo.fecha.isAtSameMomentAs(dia)).isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('El día seleccionado no tendrá atención por día especial'),
+            actions: [
+              TextButton(
+                child: Text('Aceptar'),
+                onPressed: () => Navigator.pop(context)
+              )
+            ],
+          );
+        }
+      );
+      return;
+    }
+
+    if (diasDeVacaciones.contains(dia)) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('El día seleccionado no tendrá atención por vacaciones del médico'),
+            actions: [
+              TextButton(
+                child: Text('Aceptar'),
+                onPressed: () => Navigator.pop(context)
+              )
+            ],
+          );
+        }
+      );
+      return;
+    }
+
+
     final totalCitas = await _citasService.listarPorEspecialidadMedicoDia(
       especialidadId, 
       medicoId, 
@@ -209,7 +329,7 @@ class _AgendamientoCitasCalendarioPageState extends State<AgendamientoCitasCalen
                                     
                                     final _nuevaCitaSolicitada = CitaSolicitada(
                                       cita: cita,
-                                      estadoCita: 'agendado',
+                                      estadoCita: 'agendada',
                                       fecha: DateTime.now()
                                     );
 

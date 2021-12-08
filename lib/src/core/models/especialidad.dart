@@ -27,9 +27,6 @@ class Especialidad {
   Map<String, dynamic> toMap() => {
     'codigo': codigo,
     'clasificacion': clasificacion,
-    // 'horaInicio': TimeHelper.aString(horaInicio),
-    // 'horaFinal': TimeHelper.aString(horaFinal),
-    // 'minutosAtencion': minutosAtencion,
     'estadoVigente': estadoVigente
   };
 

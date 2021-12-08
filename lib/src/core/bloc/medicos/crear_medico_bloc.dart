@@ -35,7 +35,7 @@ class CrearMedicoBloc {
 
   final _estadoPorDefectoVigente = false;
 
-  void crear() async {
+  Future<void> crear() async {
     final _nuevoMedico = Medico(
       nombre: nombre,
       numeroMatricula: numeroMatricula,
